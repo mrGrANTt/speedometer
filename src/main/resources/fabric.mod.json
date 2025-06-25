@@ -9,14 +9,17 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/mrGrANTt/speedometer"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT License",
 	"icon": "assets/speedometr/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"mrg.speedometr.Speedometr"
+		],
+		"modmenu": [
+			"mrg.speedometr.ModeMenuApi"
 		]
 	},
 	"mixins": [
@@ -30,5 +33,13 @@
 	},
 	"suggests": {
 		"another-mod": "*"
+	},
+
+	"custom": {
+		"modmenu": {
+			"links": {
+			},
+			"update_checker": true
+		}
 	}
 }
