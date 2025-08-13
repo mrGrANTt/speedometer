@@ -44,49 +44,53 @@ public class SpeedometerDraw {
     }
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
-        //Speedometr.LOGGER.info("Counting");
-        int speed = (int) Math.ceil(this.speed * 20);
-        int speedSize = speed == 0 ? 1 :  (int) Math.log10(speed) + 1;
-        int speedXSize = (int)((6 * speedSize - 1) * numScale);
-        int speedYSize = (int)(7 * numScale);
-        int TextureXSize = (int)(107 * textureScale);
-        int TextureYSize = (int)(42 * textureScale);
+        if (ConfigValues.enabled) {
+            //Speedometr.LOGGER.info("Counting");
+            int speed = (int) Math.ceil(this.speed * 20);
+            int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
+            int speedXSize = (int) ((6 * speedSize - 1) * numScale);
+            int speedYSize = (int) (7 * numScale);
+            int TextureXSize = (int) (107 * textureScale);
+            int TextureYSize = (int) (42 * textureScale);
 
-        int x = (this.x + (TextureXSize - speedXSize) / 2),
-                y = (this.y + (TextureYSize - speedYSize) / 2);
+            int x = (this.x + (TextureXSize - speedXSize) / 2),
+                    y = (this.y + (TextureYSize - speedYSize) / 2);
 
 
-        //Speedometr.LOGGER.info("MatrixStack");
-        MatrixStack ms =  dc.getMatrices();
-        ms.push();
+            //Speedometr.LOGGER.info("MatrixStack");
+            MatrixStack ms = dc.getMatrices();
+            ms.push();
             ms.scale(numScale, numScale, 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
                     (int) (x / numScale), (int) (y / numScale), color, shadow);
             //dc.drawVerticalLine(45,0,100,0xFF00FF00);
-        ms.pop();
+            ms.pop();
 
-        ms.push();
+            ms.push();
             ms.scale(metricScale, metricScale, 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
-                    (int) ((x + speedXSize + 2) / metricScale) , (int) ((y + speedYSize) / metricScale) -7, color, shadow);
+                    (int) ((x + speedXSize + 2) / metricScale), (int) ((y + speedYSize) / metricScale) - 7, color, shadow);
             //dc.drawVerticalLine(15,0,100,0xFF00FF00);
-        ms.pop();
+            ms.pop();
 
-        //Speedometr.LOGGER.info("draw Texture");
-        dc.drawTexture(RenderLayer::getGuiTextured, texture, this.x, this.y,
-                0, 0, TextureXSize, TextureYSize,
-                TextureXSize, TextureYSize);
+            //Speedometr.LOGGER.info("draw Texture");
+            dc.drawTexture(RenderLayer::getGuiTextured, texture, this.x, this.y,
+                    0, 0, TextureXSize, TextureYSize,
+                    TextureXSize, TextureYSize);
 
-        //dc.drawVerticalLine(90,0,100,0xFF00FF00);
+            //dc.drawVerticalLine(90,0,100,0xFF00FF00);
+        }
     }
 
     public void setSpeed(MinecraftClient mc) {
-    ClientPlayerEntity cpe = mc.player;
-    if (cpe != null && count == 0) {
-        //Speedometr.LOGGER.info("new speed");
-        speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO);
-    }
-    count++;
-    if(count >= dilay) count = 0;
+        if (ConfigValues.enabled) {
+            ClientPlayerEntity cpe = mc.player;
+            if (cpe != null && count == 0) {
+                //Speedometr.LOGGER.info("new speed");
+                speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO);
+            }
+            count++;
+            if(count >= dilay) count = 0;
+        }
     }
 }

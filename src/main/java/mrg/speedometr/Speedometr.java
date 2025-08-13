@@ -20,7 +20,6 @@ public class Speedometr implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
 		speedometerDraw = new SpeedometerDraw();
 		LOGGER.info("Hello Fabric world!");
 	}

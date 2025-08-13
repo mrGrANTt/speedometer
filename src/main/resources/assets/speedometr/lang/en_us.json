@@ -1,0 +1,7 @@
+{
+  "config.title": "Config screen",
+  "config.enabled": "On",
+  "config.disabled": "Off",
+  "config.set_enabled" : "Is enabled:",
+  "config.close": "Close"
+}
