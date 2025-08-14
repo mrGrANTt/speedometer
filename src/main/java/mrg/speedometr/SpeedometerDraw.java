@@ -68,7 +68,7 @@ public class SpeedometerDraw {
                     (int) ((x + speedXSize + 2) / metricScale), (int) ((y + speedYSize) / metricScale) - 7, color, shadow);
             ms.pop();
 
-            dc.drawTexture(RenderLayer::getGuiTextured, texture, this.x, this.y,
+            dc.drawTexture(texture, this.x, this.y,
                     0, 0, TextureXSize, TextureYSize,
                     TextureXSize, TextureYSize);
         }
@@ -78,7 +78,7 @@ public class SpeedometerDraw {
         if (ConfigValues.enabled && !MinecraftClient.getInstance().options.hudHidden) {
             ClientPlayerEntity cpe = mc.player;
             if (cpe != null && count == 0) {
-                speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO);
+                speed = cpe.getVelocity().distanceTo(Vec3d.ZERO);
             }
             count++;
             if(count >= dilay) count = 0;
