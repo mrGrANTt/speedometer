@@ -44,7 +44,7 @@ public class SpeedometerDraw {
     }
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
-        if (ConfigValues.enabled) {
+        if (ConfigValues.enabled && !MinecraftClient.getInstance().options.hudHidden) {
             int speed = (int) Math.ceil(this.speed * 20);
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * numScale);
@@ -75,7 +75,7 @@ public class SpeedometerDraw {
     }
 
     public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.enabled) {
+        if (ConfigValues.enabled && !MinecraftClient.getInstance().options.hudHidden) {
             ClientPlayerEntity cpe = mc.player;
             if (cpe != null && count == 0) {
                 speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO);
