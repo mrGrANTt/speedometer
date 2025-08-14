@@ -1,17 +1,12 @@
  package mrg.speedometr;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix3x2fStack;
@@ -52,7 +47,6 @@ import org.joml.Matrix3x2fStack;
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.enabled) {
-            //Speedometr.LOGGER.info("Counting");
             int speed = (int) Math.ceil(this.speed * 20);
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * numScale);
@@ -64,30 +58,23 @@ import org.joml.Matrix3x2fStack;
                     y = (this.y + (TextureYSize - speedYSize) / 2);
 
 
-            //Speedometr.LOGGER.info("MatrixStack");
             Matrix3x2fStack ms = dc.getMatrices();
+
             ms.pushMatrix();
             ms.scale(numScale, numScale);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
                     (int) (x / numScale), (int) (y / numScale), color, shadow);
-            //dc.drawVerticalLine(45,0,100,0xFF00FF00);
             ms.popMatrix();
 
             ms.pushMatrix();
             ms.scale(metricScale, metricScale);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
                     (int) ((x + speedXSize + 2) / metricScale), (int) ((y + speedYSize) / metricScale) - 7, color, shadow);
-            //dc.drawVerticalLine(15,0,100,0xFF00FF00);
             ms.popMatrix();
 
-            //dc.drawText(MinecraftClient.getInstance().textRenderer, Text.translatable("config.set_enabled"), 0, 0, color, false );
-
-            //Speedometr.LOGGER.info("draw Texture");
             dc.drawTexture(RenderPipelines.GUI_TEXTURED, texture, this.x, this.y,
                     0, 0, TextureXSize, TextureYSize,
                     TextureXSize, TextureYSize);
-
-            //dc.drawVerticalLine(90,0,100,0xFF00FF00);
         }
     }
 
@@ -95,7 +82,6 @@ import org.joml.Matrix3x2fStack;
         if (ConfigValues.enabled) {
             ClientPlayerEntity cpe = mc.player;
             if (cpe != null && count == 0) {
-                //Speedometr.LOGGER.info("new speed");
                 speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO); //TODO: need other
             }
             count++;
