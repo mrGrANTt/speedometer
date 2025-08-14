@@ -2,7 +2,6 @@ package mrg.speedometr;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.minecraft.client.MinecraftClient;
 
 public class ModeMenuApi implements ModMenuApi {
     @Override

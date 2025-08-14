@@ -1,18 +1,11 @@
 package mrg.speedometr;
 
-import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.text.Text;
 
 public class ConfigScreen extends Screen {
-    public static boolean close = false;
 
     private Screen lastScreen = null;
 
@@ -48,13 +41,3 @@ public class ConfigScreen extends Screen {
             client.setScreen(lastScreen);
     }
 }
-/*
-        if (child instanceof Drawable) {
-            this.drawables.remove((Drawable)child);
-        }
-
-        if (child instanceof Selectable) {
-            this.selectables.remove((Selectable)child);
-        }
-
-*/
