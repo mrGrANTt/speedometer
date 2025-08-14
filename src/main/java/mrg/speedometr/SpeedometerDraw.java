@@ -1,16 +1,22 @@
  package mrg.speedometr;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix3x2fStack;
 
-public class SpeedometerDraw {
+ public class SpeedometerDraw {
     private double dilay;
     private int x;
     private int y;
@@ -35,11 +41,12 @@ public class SpeedometerDraw {
         numScale = 1.5f;
         textureScale = 0.5f;
         metricScale = 0.75f;
-        color = 0xFFFFFF;
+        color = 0xFFFFFFFF;
         shadow = false;
         texture = Identifier.of(Speedometr.MOD_ID, "/textures/gui/frame.png");
 
-        HudRenderCallback.EVENT.register(this::Handler);
+        HudElementRegistry.addLast(Identifier.of(Speedometr.MOD_ID, "speedomert"), this::Handler);
+
         ClientTickEvents.START_CLIENT_TICK.register(this::setSpeed);
     }
 
@@ -58,23 +65,25 @@ public class SpeedometerDraw {
 
 
             //Speedometr.LOGGER.info("MatrixStack");
-            MatrixStack ms = dc.getMatrices();
-            ms.push();
-            ms.scale(numScale, numScale, 1f);
+            Matrix3x2fStack ms = dc.getMatrices();
+            ms.pushMatrix();
+            ms.scale(numScale, numScale);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
                     (int) (x / numScale), (int) (y / numScale), color, shadow);
             //dc.drawVerticalLine(45,0,100,0xFF00FF00);
-            ms.pop();
+            ms.popMatrix();
 
-            ms.push();
-            ms.scale(metricScale, metricScale, 1f);
+            ms.pushMatrix();
+            ms.scale(metricScale, metricScale);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
                     (int) ((x + speedXSize + 2) / metricScale), (int) ((y + speedYSize) / metricScale) - 7, color, shadow);
             //dc.drawVerticalLine(15,0,100,0xFF00FF00);
-            ms.pop();
+            ms.popMatrix();
+
+            //dc.drawText(MinecraftClient.getInstance().textRenderer, Text.translatable("config.set_enabled"), 0, 0, color, false );
 
             //Speedometr.LOGGER.info("draw Texture");
-            dc.drawTexture(RenderLayer::getGuiTextured, texture, this.x, this.y,
+            dc.drawTexture(RenderPipelines.GUI_TEXTURED, texture, this.x, this.y,
                     0, 0, TextureXSize, TextureYSize,
                     TextureXSize, TextureYSize);
 
@@ -87,7 +96,7 @@ public class SpeedometerDraw {
             ClientPlayerEntity cpe = mc.player;
             if (cpe != null && count == 0) {
                 //Speedometr.LOGGER.info("new speed");
-                speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO);
+                speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO); //TODO: need other
             }
             count++;
             if(count >= dilay) count = 0;
