@@ -1,15 +1,15 @@
  package mrg.speedometr;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Matrix3x2fStack;
 
  public class SpeedometerDraw {
     private double dilay;
@@ -40,7 +40,7 @@ import org.joml.Matrix3x2fStack;
         shadow = false;
         texture = Identifier.of(Speedometr.MOD_ID, "/textures/gui/frame.png");
 
-        HudElementRegistry.addLast(Identifier.of(Speedometr.MOD_ID, "speedomert"), this::Handler);
+        HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerBefore(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(Speedometr.MOD_ID, "speedomert"), this::Handler));
 
         ClientTickEvents.START_CLIENT_TICK.register(this::setSpeed);
     }
@@ -58,21 +58,21 @@ import org.joml.Matrix3x2fStack;
                     y = (this.y + (TextureYSize - speedYSize) / 2);
 
 
-            Matrix3x2fStack ms = dc.getMatrices();
+            MatrixStack ms = dc.getMatrices();
 
-            ms.pushMatrix();
-            ms.scale(numScale, numScale);
+            ms.push();
+            ms.scale(numScale, numScale, 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
                     (int) (x / numScale), (int) (y / numScale), color, shadow);
-            ms.popMatrix();
+            ms.pop();
 
-            ms.pushMatrix();
-            ms.scale(metricScale, metricScale);
+            ms.push();
+            ms.scale(metricScale, metricScale, 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
                     (int) ((x + speedXSize + 2) / metricScale), (int) ((y + speedYSize) / metricScale) - 7, color, shadow);
-            ms.popMatrix();
+            ms.pop();
 
-            dc.drawTexture(RenderPipelines.GUI_TEXTURED, texture, this.x, this.y,
+            dc.drawTexture(RenderLayer::getGuiTextured, texture, this.x, this.y,
                     0, 0, TextureXSize, TextureYSize,
                     TextureXSize, TextureYSize);
         }
