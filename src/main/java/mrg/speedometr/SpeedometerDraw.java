@@ -26,6 +26,9 @@ import net.minecraft.util.math.Vec3d;
     private double speed;
     private double count;
 
+    private long lastNanoTime;
+    private Vec3d lastPos;
+
     public SpeedometerDraw() {
         speed = 0;
         count = 0;
@@ -42,12 +45,14 @@ import net.minecraft.util.math.Vec3d;
 
         HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerBefore(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(Speedometr.MOD_ID, "speedomert"), this::Handler));
 
+        lastNanoTime = System.nanoTime();
+        lastPos = Vec3d.ZERO;
         ClientTickEvents.START_CLIENT_TICK.register(this::setSpeed);
     }
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.enabled) {
-            int speed = (int) Math.ceil(this.speed * 20);
+            int speed = (int) Math.round(this.speed * 20);
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * numScale);
             int speedYSize = (int) (7 * numScale);
@@ -78,14 +83,24 @@ import net.minecraft.util.math.Vec3d;
         }
     }
 
-    public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.enabled) {
-            ClientPlayerEntity cpe = mc.player;
-            if (cpe != null && count == 0) {
-                speed = (cpe.isOnGround() ? cpe.getVelocity().getHorizontal() : cpe.getVelocity()).distanceTo(Vec3d.ZERO); //TODO: need other
-            }
-            count++;
-            if(count >= dilay) count = 0;
-        }
-    }
+     public void setSpeed(MinecraftClient mc) {
+         if (ConfigValues.enabled) {
+             if(count++ >= dilay) {
+                 ClientPlayerEntity cpe = mc.player;
+                 if (cpe != null) {
+                     long now = System.nanoTime();
+                     double deltaTime = (now - lastNanoTime) / 1000000000d;
+
+                     if (lastNanoTime != 0) {
+                         Vec3d pos = cpe.getPos();
+                         speed = lastPos.distanceTo(pos) / deltaTime;
+                         lastPos = pos;
+                     }
+
+                     lastNanoTime = now;
+                 }
+                 count = 0;
+             }
+         }
+     }
 }
