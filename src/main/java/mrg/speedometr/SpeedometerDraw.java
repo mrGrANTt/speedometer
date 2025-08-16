@@ -52,7 +52,7 @@ import net.minecraft.util.math.Vec3d;
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.enabled) {
-            int speed = (int) Math.round(this.speed * 20);
+            int speed = (int) Math.round(this.speed);
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * numScale);
             int speedYSize = (int) (7 * numScale);
