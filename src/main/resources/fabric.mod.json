@@ -3,7 +3,7 @@
 	"id": "speedometr",
 	"version": "${version}",
 	"name": "Speedometr",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A simple mod that adds a speedometer to your GUI",
 	"authors": [
 		"mr_GrANTt"
 	],
@@ -38,6 +38,7 @@
 	"custom": {
 		"modmenu": {
 			"links": {
+				"modmenu.discord": "https://discord.gg/93pabTAKfZ"
 			},
 			"update_checker": true
 		}
