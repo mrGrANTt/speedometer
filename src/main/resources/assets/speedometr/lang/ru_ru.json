@@ -1,7 +1,0 @@
-{
-  "config.title": "Конфигурация мода",
-  "config.enabled": "Вкл",
-  "config.disabled": "Выкл",
-  "config.set_enabled" : "Включен:",
-  "config.close": "Закрыть"
-}
