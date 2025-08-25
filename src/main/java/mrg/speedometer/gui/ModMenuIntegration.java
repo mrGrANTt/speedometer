@@ -1,11 +1,12 @@
-package mrg.speedometr;
+package mrg.speedometer.gui;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import mrg.speedometer.util.ConfigScreenBuilder;
 
-public class ModeMenuApi implements ModMenuApi {
+public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return Speedometr::getCnfScreen;
+        return ConfigScreenBuilder::getScreen;
     }
 }

@@ -1,5 +1,7 @@
- package mrg.speedometr;
+ package mrg.speedometer.client;
 
+import mrg.speedometer.Speedometer;
+import mrg.speedometer.util.ConfigValues;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -10,17 +12,14 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
-public class SpeedometerDraw {
-    private double dilay;
-    private int x;
-    private int y;
-    private float numScale;
-    private float textureScale;
-    private float metricScale;
-    private int color;
-    private boolean shadow;
+public class SpeedometerHandler {
+    public static SpeedometerHandler INSTANCE;
 
-    private Identifier texture;
+    public static void init() {
+        INSTANCE = new SpeedometerHandler();
+    }
+
+    private final Identifier texture;
 
     private double speed;
     private double count;
@@ -28,61 +27,55 @@ public class SpeedometerDraw {
     private long lastNanoTime;
     private Vec3d lastPos;
 
-    public SpeedometerDraw() {
+    public SpeedometerHandler() {
         speed = 0;
         count = 0;
 
-        dilay = 10;
-        x = 10;
-        y = 15;
-        numScale = 1.5f;
-        textureScale = 0.5f;
-        metricScale = 0.75f;
-        color = 0xFFFFFF;
-        shadow = false;
-        texture = Identifier.of(Speedometr.MOD_ID, "/textures/gui/frame.png");
-
-        HudRenderCallback.EVENT.register(this::Handler);
+        texture = Identifier.of(Speedometer.MOD_ID, "/textures/gui/frame.png");
 
         lastNanoTime = System.nanoTime();
         lastPos = Vec3d.ZERO;
+
+        HudRenderCallback.EVENT.register(this::Handler);
         ClientTickEvents.START_CLIENT_TICK.register(this::setSpeed);
     }
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
-        if (ConfigValues.enabled && !MinecraftClient.getInstance().options.hudHidden) {
+        if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().options.hudHidden) {
             int speed = (int) Math.round(this.speed);
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
-            int speedXSize = (int) ((6 * speedSize - 1) * numScale);
-            int speedYSize = (int) (7 * numScale);
-            int TextureXSize = (int) (107 * textureScale);
-            int TextureYSize = (int) (42 * textureScale);
+            int speedXSize = (int) ((6 * speedSize - 1) * (ConfigValues.INSTANCE.scale * 1.5f));
+            int speedYSize = (int) (7 * (ConfigValues.INSTANCE.scale * 1.5f));
+            int TextureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
+            int TextureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
 
-            int x = (this.x + (TextureXSize - speedXSize) / 2),
-                    y = (this.y + (TextureYSize - speedYSize) / 2);
+            int x = (ConfigValues.INSTANCE.x + (TextureXSize - speedXSize) / 2),
+                    y = (ConfigValues.INSTANCE.y + (TextureYSize - speedYSize) / 2);
 
             MatrixStack ms = dc.getMatrices();
             ms.push();
-            ms.scale(numScale, numScale, 1f);
+            ms.scale((ConfigValues.INSTANCE.scale * 1.5f), (ConfigValues.INSTANCE.scale * 1.5f), 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
-                    (int) (x / numScale), (int) (y / numScale), color, shadow);
+                    (int) (x / (ConfigValues.INSTANCE.scale * 1.5f)), (int) (y / (ConfigValues.INSTANCE.scale * 1.5f)), ConfigValues.INSTANCE.color, false);
             ms.pop();
 
             ms.push();
-            ms.scale(metricScale, metricScale, 1f);
+            ms.scale((ConfigValues.INSTANCE.scale * 0.75f), (ConfigValues.INSTANCE.scale * 0.75f), 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
-                    (int) ((x + speedXSize + 2) / metricScale), (int) ((y + speedYSize) / metricScale) - 7, color, shadow);
+                    (int) ((x + speedXSize + 2) / (ConfigValues.INSTANCE.scale * 0.75f)),
+                    (int) ((y + speedYSize) / (ConfigValues.INSTANCE.scale * 0.75f)) - 7,
+                    ConfigValues.INSTANCE.color, false);
             ms.pop();
 
-            dc.drawTexture(texture, this.x, this.y,
+            dc.drawTexture(texture, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
                     0, 0, TextureXSize, TextureYSize,
                     TextureXSize, TextureYSize);
         }
     }
 
     public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.enabled) {
-            if(count++ >= dilay) {
+        if (ConfigValues.INSTANCE.enabled) {
+            if(count++ >= ConfigValues.INSTANCE.dilay) {
                 ClientPlayerEntity cpe = mc.player;
                 if (cpe != null) {
                     long now = System.nanoTime();
