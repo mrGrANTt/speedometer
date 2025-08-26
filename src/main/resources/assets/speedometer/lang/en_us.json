@@ -1,0 +1,24 @@
+{
+  "speedometer:button.menu_title": "Speedometer",
+  "speedometer:button.open_menu": "Open menu",
+  "speedometer:button.toggle_hud": "Toggle Hud",
+
+  "speedometer:config.title": "Config screen",
+  "speedometer:config.category.general": "General Category",
+  "speedometer:config.enabled": "§2On",
+  "speedometer:config.disabled": "§cOff",
+
+  "speedometer:config.general.set_enabled" : "Is enabled:",
+  "speedometer:config.general.color" : "Base speedometer color",
+  "speedometer:config.general.color1" : "Second speedometer color",
+  "speedometer:config.general.color2" : "Third speedometer color",
+  "speedometer:config.general.x" : "X position of speedometer",
+  "speedometer:config.general.y" : "Y position of speedometer",
+  "speedometer:config.general.scale" : "Speedometer scale",
+  "speedometer:config.general.dilay" : "Speedometer update period",
+
+  "speedometer:config.general.color.desr" : "Default color used in the absence of speed",
+  "speedometer:config.general.color1.desr" : "Color displayed at a speed of 80+ m/s",
+  "speedometer:config.general.color2.desr" : "Color displayed at a speed of 100+ m/s",
+  "speedometer:config.general.dilay.desr" : "How often the speedometer should update its value (in ticks).\n§c1§f - the fastest speed (not desirable)\n§210§f - moderate speed (recommended)\n§620§f - slow update (at your discretion)"
+}
