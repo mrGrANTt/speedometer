@@ -19,7 +19,7 @@ public class ConfigValues implements ConfigData {
 
     public boolean enabled = true;
 
-    public int dilay = 10;
+    public int dilay = 5;
     public int x = 10;
     public int y = 15;
     public float scale = 1;

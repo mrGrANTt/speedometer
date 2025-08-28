@@ -10,7 +10,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class SpeedometerHandler {
     public static SpeedometerHandler INSTANCE;
@@ -40,23 +43,75 @@ public class SpeedometerHandler {
         ClientTickEvents.START_CLIENT_TICK.register(this::setSpeed);
     }
 
+    private int countSplitColors(int c1, int c2, int count, int splitCount) {
+        return c1 + ((c2 - c1) / splitCount) * count;
+    }
+
+    private int countColors(int c1, int c2, int count, int splitCount) {
+        return countSplitColors(ColorHelper.Argb.getRed(c1), ColorHelper.Argb.getRed(c2), count, splitCount) * 0x10000
+                + countSplitColors(ColorHelper.Argb.getGreen(c1), ColorHelper.Argb.getGreen(c2), count, splitCount) * 0x100
+                + countSplitColors(ColorHelper.Argb.getBlue(c1), ColorHelper.Argb.getBlue(c2), count, splitCount);
+    }
+
+    private int countColorWithSpeed(int speed) {
+        int color = ConfigValues.INSTANCE.color;
+
+        if(speed >= 40 && speed < 80)
+            color = countColors(ConfigValues.INSTANCE.color, ConfigValues.INSTANCE.color1, speed - 40, 39);
+        else if(speed >= 80 && speed < 100)
+            color = countColors(ConfigValues.INSTANCE.color1, ConfigValues.INSTANCE.color2, speed - 80, 19);
+        else if(speed >= 100)
+            color = ConfigValues.INSTANCE.color2;
+
+        return color + 0xFF000000;
+    }
+
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().options.hudHidden) {
             int speed = (int) Math.round(this.speed);
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * (ConfigValues.INSTANCE.scale * 1.5f));
             int speedYSize = (int) (7 * (ConfigValues.INSTANCE.scale * 1.5f));
-            int TextureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
-            int TextureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
+            int textureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
+            int textureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
+            int color = countColorWithSpeed(speed);
 
-            int x = (ConfigValues.INSTANCE.x + (TextureXSize - speedXSize) / 2),
-                    y = (ConfigValues.INSTANCE.y + (TextureYSize - speedYSize) / 2);
+            int x = (ConfigValues.INSTANCE.x + (textureXSize - speedXSize) / 2),
+                    y = (ConfigValues.INSTANCE.y + (textureYSize - speedYSize) / 2);
+
+
+            Matrix4f transformationMatrix = dc.getMatrices().peek().getPositionMatrix();
+            Tessellator tessellator = Tessellator.getInstance();
+
+            BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y, 5).color(color);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + textureYSize - (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + textureYSize - (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize - (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize - (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y, 5).color(color);
+
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+            BufferRenderer.drawWithGlobalProgram(buffer.end());
+
 
             MatrixStack ms = dc.getMatrices();
             ms.push();
             ms.scale((ConfigValues.INSTANCE.scale * 1.5f), (ConfigValues.INSTANCE.scale * 1.5f), 1f);
             dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
-                    (int) (x / (ConfigValues.INSTANCE.scale * 1.5f)), (int) (y / (ConfigValues.INSTANCE.scale * 1.5f)), ConfigValues.INSTANCE.color, false);
+                    (int) (x / (ConfigValues.INSTANCE.scale * 1.5f)), (int) (y / (ConfigValues.INSTANCE.scale * 1.5f)), color, false);
             ms.pop();
 
             ms.push();
@@ -64,17 +119,13 @@ public class SpeedometerHandler {
             dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
                     (int) ((x + speedXSize + 2) / (ConfigValues.INSTANCE.scale * 0.75f)),
                     (int) ((y + speedYSize) / (ConfigValues.INSTANCE.scale * 0.75f)) - 7,
-                    ConfigValues.INSTANCE.color, false);
+                    color, false);
             ms.pop();
-
-            dc.drawTexture(texture, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
-                    0, 0, TextureXSize, TextureYSize,
-                    TextureXSize, TextureYSize);
         }
     }
 
     public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.INSTANCE.enabled) {
+        if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().isPaused()) {
             if(count++ >= ConfigValues.INSTANCE.dilay) {
                 ClientPlayerEntity cpe = mc.player;
                 if (cpe != null) {
