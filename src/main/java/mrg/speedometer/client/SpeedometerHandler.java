@@ -129,8 +129,8 @@ public class SpeedometerHandler {
     }
 
     public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.INSTANCE.enabled) {
-            if(!MinecraftClient.getInstance().isPaused() && count++ >= ConfigValues.INSTANCE.dilay) {
+        if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().isPaused()) {
+            if(count++ >= ConfigValues.INSTANCE.dilay) {
                 ClientPlayerEntity cpe = mc.player;
                 if (cpe != null) {
                     long now = System.nanoTime();
