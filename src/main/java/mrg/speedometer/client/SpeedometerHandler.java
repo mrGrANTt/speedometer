@@ -56,11 +56,11 @@ public class SpeedometerHandler {
     private int countColorWithSpeed(int speed) {
         int color = ConfigValues.INSTANCE.color;
 
-        if(speed >= 40 && speed < 80)
-            color = countColors(ConfigValues.INSTANCE.color, ConfigValues.INSTANCE.color1, speed - 40, 39);
-        else if(speed >= 80 && speed < 100)
-            color = countColors(ConfigValues.INSTANCE.color1, ConfigValues.INSTANCE.color2, speed - 80, 19);
-        else if(speed >= 100)
+        if(speed >= 7 && speed < 30)
+            color = countColors(ConfigValues.INSTANCE.color, ConfigValues.INSTANCE.color1, speed - 7, 27);
+        else if(speed >= 30 && speed < 80)
+            color = countColors(ConfigValues.INSTANCE.color1, ConfigValues.INSTANCE.color2, speed - 30, 49);
+        else if(speed >= 80)
             color = ConfigValues.INSTANCE.color2;
 
         return color + 0xFF000000;
