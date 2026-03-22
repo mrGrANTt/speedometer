@@ -12,6 +12,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class SpeedometerHandler {
     public static SpeedometerHandler INSTANCE;
@@ -78,6 +80,34 @@ public class SpeedometerHandler {
             int x = (ConfigValues.INSTANCE.x + (textureXSize - speedXSize) / 2),
                     y = (ConfigValues.INSTANCE.y + (textureYSize - speedYSize) / 2);
 
+//
+            Matrix4f transformationMatrix = dc.getMatrices().peek().getPositionMatrix();
+            Tessellator tessellator = Tessellator.getInstance();
+
+            BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y, 5).color(color);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + textureYSize - (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + textureYSize - (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize - (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
+
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize - (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y, 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + (ConfigValues.INSTANCE.scale * 3), 5).color(color);
+            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y, 5).color(color);
+
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+            BufferRenderer.drawWithGlobalProgram(buffer.end());
+//
+
             MatrixStack ms = dc.getMatrices();
             ms.push();
             ms.scale((ConfigValues.INSTANCE.scale * 1.5f), (ConfigValues.INSTANCE.scale * 1.5f), 1f);
@@ -92,10 +122,10 @@ public class SpeedometerHandler {
                     (int) ((y + speedYSize) / (ConfigValues.INSTANCE.scale * 0.75f)) - 7,
                     color, false);
             ms.pop();
-
-            dc.drawTexture(RenderLayer::getGuiTextured, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
+            
+            /* dc.drawTexture(RenderLayer::getGuiTextured, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
                     0, 0, TextureXSize, TextureYSize,
-                    TextureXSize, TextureYSize, color);
+                    TextureXSize, TextureYSize, color); */
         }
     }
 
