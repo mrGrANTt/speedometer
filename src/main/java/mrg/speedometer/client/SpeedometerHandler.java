@@ -93,7 +93,7 @@ public class SpeedometerHandler {
 
             dc.drawTexture(RenderLayer::getGuiTextured, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
                     0, 0, textureXSize, textureYSize,
-                    textureXSize, textureYSize);
+                    textureXSize, textureYSize, color);
         }
     }
 
