@@ -3,9 +3,8 @@ package mrg.speedometer.client;
 import mrg.speedometer.Speedometer;
 import mrg.speedometer.util.ConfigValues;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
@@ -17,6 +16,7 @@ import net.minecraft.util.math.Vec3d;
 public class SpeedometerHandler {
     public static SpeedometerHandler INSTANCE;
     public static Identifier FRAME = Identifier.of(Speedometer.MOD_ID, "/textures/gui/frame.png");
+
 
     public static void init() {
         INSTANCE = new SpeedometerHandler();
@@ -35,7 +35,7 @@ public class SpeedometerHandler {
         lastNanoTime = System.nanoTime();
         lastPos = Vec3d.ZERO;
 
-        HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerBefore(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(Speedometer.MOD_ID, "speedometer"), this::Handler));
+        HudRenderCallback.EVENT.register(this::Handler);
         ClientTickEvents.START_CLIENT_TICK.register(this::setSpeed);
     }
 
