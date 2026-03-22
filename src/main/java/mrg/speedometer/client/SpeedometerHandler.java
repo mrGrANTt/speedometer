@@ -1,10 +1,10 @@
- package mrg.speedometer.client;
+package mrg.speedometer.client;
 
 import mrg.speedometer.Speedometer;
 import mrg.speedometer.util.ConfigValues;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
@@ -17,12 +17,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 public class SpeedometerHandler {
     public static SpeedometerHandler INSTANCE;
+    public static Identifier FRAME = Identifier.of(Speedometer.MOD_ID, "/textures/gui/frame.png");
+
 
     public static void init() {
         INSTANCE = new SpeedometerHandler();
     }
-
-    private final Identifier texture;
 
     private double speed;
     private double count;
@@ -33,8 +33,6 @@ public class SpeedometerHandler {
     public SpeedometerHandler() {
         speed = 0;
         count = 0;
-
-        texture = Identifier.of(Speedometer.MOD_ID, "/textures/gui/frame.png");
 
         lastNanoTime = System.nanoTime();
         lastPos = Vec3d.ZERO;
@@ -48,9 +46,9 @@ public class SpeedometerHandler {
     }
 
     private int countColors(int c1, int c2, int count, int splitCount) {
-        return countSplitColors(ColorHelper.Argb.getRed(c1), ColorHelper.Argb.getRed(c2), count, splitCount) * 0x10000
-                + countSplitColors(ColorHelper.Argb.getGreen(c1), ColorHelper.Argb.getGreen(c2), count, splitCount) * 0x100
-                + countSplitColors(ColorHelper.Argb.getBlue(c1), ColorHelper.Argb.getBlue(c2), count, splitCount);
+        return countSplitColors(ColorHelper.getRed(c1), ColorHelper.getRed(c2), count, splitCount) * 0x10000
+                + countSplitColors(ColorHelper.getGreen(c1), ColorHelper.getGreen(c2), count, splitCount) * 0x100
+                + countSplitColors(ColorHelper.getBlue(c1), ColorHelper.getBlue(c2), count, splitCount);
     }
 
     private int countColorWithSpeed(int speed) {
@@ -72,6 +70,9 @@ public class SpeedometerHandler {
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * (ConfigValues.INSTANCE.scale * 1.5f));
             int speedYSize = (int) (7 * (ConfigValues.INSTANCE.scale * 1.5f));
+            int TextureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
+            int TextureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
+
             int textureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
             int textureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
             int color = countColorWithSpeed(speed);
@@ -79,7 +80,7 @@ public class SpeedometerHandler {
             int x = (ConfigValues.INSTANCE.x + (textureXSize - speedXSize) / 2),
                     y = (ConfigValues.INSTANCE.y + (textureYSize - speedYSize) / 2);
 
-
+//
             Matrix4f transformationMatrix = dc.getMatrices().peek().getPositionMatrix();
             Tessellator tessellator = Tessellator.getInstance();
 
@@ -105,7 +106,7 @@ public class SpeedometerHandler {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             BufferRenderer.drawWithGlobalProgram(buffer.end());
-
+//
 
             MatrixStack ms = dc.getMatrices();
             ms.push();
@@ -121,6 +122,10 @@ public class SpeedometerHandler {
                     (int) ((y + speedYSize) / (ConfigValues.INSTANCE.scale * 0.75f)) - 7,
                     color, false);
             ms.pop();
+            
+            /* dc.drawTexture(RenderLayer::getGuiTextured, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
+                    0, 0, TextureXSize, TextureYSize,
+                    TextureXSize, TextureYSize, color); */
         }
     }
 
