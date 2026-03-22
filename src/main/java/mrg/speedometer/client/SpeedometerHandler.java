@@ -107,7 +107,7 @@ public class SpeedometerHandler {
                     double deltaTime = (now - lastNanoTime) / 1000000000d;
 
                     if (lastNanoTime != 0) {
-                        Vec3d pos = cpe.getPos();
+                        Vec3d pos = cpe.getEntityPos();
                         speed = lastPos.distanceTo(pos) / deltaTime;
                         lastPos = pos;
                     }
