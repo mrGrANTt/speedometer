@@ -39,7 +39,6 @@
 	"custom": {
 		"modmenu": {
 			"links": {
-				"modmenu.discord": "https://discord.gg/93pabTAKfZ"
 			},
 			"update_checker": true
 		}
