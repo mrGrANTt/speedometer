@@ -68,15 +68,13 @@ public class SpeedometerHandler {
             int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
             int speedXSize = (int) ((6 * speedSize - 1) * (ConfigValues.INSTANCE.scale * 1.5f));
             int speedYSize = (int) (7 * (ConfigValues.INSTANCE.scale * 1.5f));
-            int TextureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
-            int TextureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
-
             int textureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
             int textureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
             int color = countColorWithSpeed(speed);
 
             int x = (ConfigValues.INSTANCE.x + (textureXSize - speedXSize) / 2),
                     y = (ConfigValues.INSTANCE.y + (textureYSize - speedYSize) / 2);
+
 
             MatrixStack ms = dc.getMatrices();
             ms.push();
@@ -94,8 +92,8 @@ public class SpeedometerHandler {
             ms.pop();
 
             dc.drawTexture(RenderLayer::getGuiTextured, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
-                    0, 0, TextureXSize, TextureYSize,
-                    TextureXSize, TextureYSize, color);
+                    0, 0, textureXSize, textureYSize,
+                    textureXSize, textureYSize, color);
         }
     }
 
