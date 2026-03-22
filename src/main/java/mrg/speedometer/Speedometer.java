@@ -20,10 +20,3 @@ public class Speedometer implements ModInitializer {
         LOGGER.info("Hello Fabric world!");
     }
 }
-
-/*TODO Added:
-* Config
-* Redirect
-* Lang fix
-* Button to menu and toggle btn
-*/

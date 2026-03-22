@@ -1,6 +1,5 @@
 package mrg.speedometer.client;
 
-import com.mojang.blaze3d.vertex.VertexFormat;
 import mrg.speedometer.Speedometer;
 import mrg.speedometer.util.ConfigValues;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -10,22 +9,18 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
-import net.minecraft.util.ColorCode;
-import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix3x2fStack;
-import org.joml.Matrix4f;
 
 public class SpeedometerHandler {
     public static SpeedometerHandler INSTANCE;
+    public static final Identifier FRAME = Identifier.of(Speedometer.MOD_ID, "/textures/gui/frame.png");
 
     public static void init() {
         INSTANCE = new SpeedometerHandler();
     }
-
-    private final Identifier texture;
 
     private double speed;
     private double count;
@@ -36,8 +31,6 @@ public class SpeedometerHandler {
     public SpeedometerHandler() {
         speed = 0;
         count = 0;
-
-        texture = Identifier.of(Speedometer.MOD_ID, "/textures/gui/frame.png");
 
         lastNanoTime = System.nanoTime();
         lastPos = Vec3d.ZERO;
@@ -59,11 +52,11 @@ public class SpeedometerHandler {
     private int countColorWithSpeed(int speed) {
         int color = ConfigValues.INSTANCE.color;
 
-        if(speed >= 40 && speed < 80)
-            color = countColors(ConfigValues.INSTANCE.color, ConfigValues.INSTANCE.color1, speed - 40, 39);
-        else if(speed >= 80 && speed < 100)
-            color = countColors(ConfigValues.INSTANCE.color1, ConfigValues.INSTANCE.color2, speed - 80, 19);
-        else if(speed >= 100)
+        if(speed >= 7 && speed < 30)
+            color = countColors(ConfigValues.INSTANCE.color, ConfigValues.INSTANCE.color1, speed - 7, 27);
+        else if(speed >= 30 && speed < 80)
+            color = countColors(ConfigValues.INSTANCE.color1, ConfigValues.INSTANCE.color2, speed - 30, 49);
+        else if(speed >= 80)
             color = ConfigValues.INSTANCE.color2;
 
         return color + 0xFF000000;
@@ -82,29 +75,6 @@ public class SpeedometerHandler {
             int x = (ConfigValues.INSTANCE.x + (textureXSize - speedXSize) / 2),
                     y = (ConfigValues.INSTANCE.y + (textureYSize - speedYSize) / 2);
 
-            //TODO: get Matrix4f
-            Tessellator tessellator = Tessellator.getInstance();
-
-            BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
-
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y, 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + (ConfigValues.INSTANCE.scale * 3), 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y, 5).color(color);
-
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + textureYSize - (ConfigValues.INSTANCE.scale * 3), 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
-
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + textureYSize - (ConfigValues.INSTANCE.scale * 3), 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize - (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + textureYSize, 5).color(color);
-
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize - (ConfigValues.INSTANCE.scale * 3), ConfigValues.INSTANCE.y, 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y + (ConfigValues.INSTANCE.scale * 3), 5).color(color);
-            buffer.vertex(transformationMatrix, ConfigValues.INSTANCE.x + textureXSize, ConfigValues.INSTANCE.y, 5).color(color);
-
-            //TODO: Render buffered frame
-
             Matrix3x2fStack ms = dc.getMatrices();
 
             ms.pushMatrix();
@@ -121,9 +91,10 @@ public class SpeedometerHandler {
                     color - 0x1000000, false);
             ms.popMatrix();
 
-            dc.drawTexture(RenderPipelines.GUI_TEXTURED, texture, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
+
+            dc.drawTexture(RenderPipelines.GUI_TEXTURED, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
                     0, 0, textureXSize, textureYSize,
-                    textureXSize, textureYSize);
+                    textureXSize, textureYSize, color);
         }
     }
 
