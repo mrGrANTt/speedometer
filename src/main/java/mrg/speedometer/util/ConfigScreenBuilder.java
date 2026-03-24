@@ -55,7 +55,7 @@ public class ConfigScreenBuilder {
                 .setSaveConsumer(newValue -> ConfigValues.INSTANCE.scale = newValue)
                 .build());
         general.addEntry(entryBuilder.startIntSlider(Text.translatable("speedometer:config.general.dilay"), ConfigValues.INSTANCE.dilay, 1, 20)
-                .setDefaultValue(10)
+                .setDefaultValue(5)
                 .setSaveConsumer(newValue -> ConfigValues.INSTANCE.dilay = newValue)
                 .setTooltip(Text.translatable("speedometer:config.general.dilay.desr"))
                 .build());

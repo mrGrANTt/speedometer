@@ -18,7 +18,7 @@
   "speedometer:config.general.dilay" : "Период обновления спидометра",
 
   "speedometer:config.general.color.desr" : "Основной цвет использоется при отсутствии скорости",
-  "speedometer:config.general.color1.desr" : "Цвет отображается при скорости 80+ м/с",
-  "speedometer:config.general.color2.desr" : "Цвет отображается при скорости 100+ м/с",
-  "speedometer:config.general.dilay.desr" : "Как часто спидометр обновляет свое значение (в тиках).\n§c1§f - максимальная скорость (Не рекомендуется)\n§210§f - Умеренная скорость (рекомендуемо)\n§620§f - самая медленная (на ваше усмотрение)"
+  "speedometer:config.general.color1.desr" : "Цвет отображается при скорости 30+ м/с",
+  "speedometer:config.general.color2.desr" : "Цвет отображается при скорости 80+ м/с",
+  "speedometer:config.general.dilay.desr" : "Как часто спидометр обновляет свое значение (в тиках).\n§c1§f - максимальная скорость (Не рекомендуется)\n§25§f - Умеренная скорость (рекомендуемо)\n§620§f - самая медленная (на ваше усмотрение)"
 }
