@@ -5,6 +5,7 @@ import mrg.speedometer.util.ConfigValues;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -65,36 +66,39 @@ public class SpeedometerHandler {
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().options.hudHidden) {
             int speed = (int) Math.round(this.speed);
-            int speedSize = speed == 0 ? 1 : (int) Math.log10(speed) + 1;
-            int speedXSize = (int) ((6 * speedSize - 1) * (ConfigValues.INSTANCE.scale * 1.5f));
-            int speedYSize = (int) (7 * (ConfigValues.INSTANCE.scale * 1.5f));
-            int textureXSize = (int) (107 * (ConfigValues.INSTANCE.scale * 0.5f));
-            int textureYSize = (int) (42 * (ConfigValues.INSTANCE.scale * 0.5f));
             int color = countColorWithSpeed(speed);
 
-            int x = (ConfigValues.INSTANCE.x + (textureXSize - speedXSize) / 2),
-                    y = (ConfigValues.INSTANCE.y + (textureYSize - speedYSize) / 2);
+            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
+            String speedText = String.valueOf(speed);
+            String metricsText = "m|s";
+
+            float scale = ConfigValues.INSTANCE.scale;
+            float scaleSpeed = scale * 1.5f;
+            float scaleMetrics = scale * 0.5f;
+            int textureWight = 54;
+            int textureHeight = 21;
+
+            int fontHeight = 7;
+            int startX = ConfigValues.INSTANCE.x;
+            int startY = ConfigValues.INSTANCE.y;
+            float speedX = startX + (textureWight*scale - getWidth(speedText)*scaleSpeed)/2f;
+            float speedY = startY + (textureHeight*scale - fontHeight*scaleSpeed)/2f;
+            float metricsX = speedX + getWidth(speedText)*scaleSpeed + 1;
+            float metricsY = speedY + fontHeight*scaleSpeed - fontHeight*scaleMetrics;
 
             Matrix3x2fStack ms = dc.getMatrices();
 
-            ms.pushMatrix();
-            ms.scale(ConfigValues.INSTANCE.scale * 1.5f, ConfigValues.INSTANCE.scale * 1.5f);
-            dc.drawText(MinecraftClient.getInstance().textRenderer, "" + speed,
-                    (int) (x / (ConfigValues.INSTANCE.scale * 1.5f)), (int) (y / (ConfigValues.INSTANCE.scale * 1.5f)), color - 0x1000000, false);
+            ms.pushMatrix().scale(scale).translate(startX/scale, startY/scale);
+            dc.drawTexture(RenderPipelines.GUI_TEXTURED, FRAME, 0, 0, 0, 0, textureWight, textureHeight, textureWight, textureHeight, color);
             ms.popMatrix();
 
-            ms.pushMatrix();
-            ms.scale((ConfigValues.INSTANCE.scale * 0.75f), (ConfigValues.INSTANCE.scale * 0.75f));
-            dc.drawText(MinecraftClient.getInstance().textRenderer, "m|s",
-                    (int) ((x + speedXSize + 2) / (ConfigValues.INSTANCE.scale * 0.75f)),
-                    (int) ((y + speedYSize) / (ConfigValues.INSTANCE.scale * 0.75f)) - 7,
-                    color - 0x1000000, false);
+            ms.pushMatrix().scale(scaleSpeed).translate(speedX/scaleSpeed, speedY/scaleSpeed);
+            dc.drawText(renderer, speedText, 0, 0, color - 0x1000000, false);
             ms.popMatrix();
 
-
-            dc.drawTexture(RenderPipelines.GUI_TEXTURED, FRAME, ConfigValues.INSTANCE.x, ConfigValues.INSTANCE.y,
-                    0, 0, textureXSize, textureYSize,
-                    textureXSize, textureYSize, color);
+            ms.pushMatrix().scale(scaleMetrics).translate(metricsX/scaleMetrics, metricsY/scaleMetrics);
+            dc.drawText(renderer, metricsText, 0, 0,color - 0x1000000, false);
+            ms.popMatrix();
         }
     }
 
@@ -117,5 +121,9 @@ public class SpeedometerHandler {
                 count = 0;
             }
         }
+    }
+
+    private int getWidth(String str) {
+        return str.length()*6-1;
     }
 }
