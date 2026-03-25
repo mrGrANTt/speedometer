@@ -8,12 +8,21 @@
   "speedometer:config.enabled": "§2On",
   "speedometer:config.disabled": "§cOff",
 
+  "speedometer:config.category.color": "Colors",
+  "speedometer:config.category.shown": "Shown",
+
   "speedometer:config.general.set_enabled" : "Is enabled:",
+  "speedometer:config.general.set_enabled_speedometer" : "Is speedometer enabled:",
+  "speedometer:config.general.set_enabled_angle" : "Is angle counter enabled:",
   "speedometer:config.general.color" : "Base speedometer color",
   "speedometer:config.general.color1" : "Second speedometer color",
   "speedometer:config.general.color2" : "Third speedometer color",
-  "speedometer:config.general.x" : "X position of speedometer",
-  "speedometer:config.general.y" : "Y position of speedometer",
+  "speedometer:config.general.speed_x" : "X position of speedometer",
+  "speedometer:config.general.speed_y" : "Y position of speedometer",
+  "speedometer:config.general.yaw_x" : "X position of yaw counter",
+  "speedometer:config.general.yaw_y" : "Y position of yaw counter",
+  "speedometer:config.general.pitch_x" : "X position of pitch counter",
+  "speedometer:config.general.pitch_y" : "Y position of pitch counter",
   "speedometer:config.general.scale" : "Speedometer scale",
   "speedometer:config.general.dilay" : "Speedometer update period",
 
