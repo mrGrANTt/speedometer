@@ -65,45 +65,76 @@ public class SpeedometerHandler {
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().options.hudHidden) {
+            int fontHeight = 7;
             int speed = (int) Math.round(this.speed);
             int color = countColorWithSpeed(speed);
-
-            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-            String speedText = String.valueOf(speed);
-            String metricsText = "m|s";
-
             float scale = ConfigValues.INSTANCE.scale;
-            float scaleSpeed = scale * 1.5f;
-            float scaleMetrics = scale * 0.5f;
-            int textureWight = 54;
-            int textureHeight = 21;
-
-            int fontHeight = 7;
-            int startX = ConfigValues.INSTANCE.x;
-            int startY = ConfigValues.INSTANCE.y;
-            float speedX = startX + (textureWight*scale - getWidth(speedText)*scaleSpeed)/2f;
-            float speedY = startY + (textureHeight*scale - fontHeight*scaleSpeed)/2f;
-            float metricsX = speedX + getWidth(speedText)*scaleSpeed + 1;
-            float metricsY = speedY + fontHeight*scaleSpeed - fontHeight*scaleMetrics;
-
+            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
             Matrix3x2fStack ms = dc.getMatrices();
 
-            ms.pushMatrix().scale(scale).translate(startX/scale, startY/scale);
-            dc.drawTexture(RenderPipelines.GUI_TEXTURED, FRAME, 0, 0, 0, 0, textureWight, textureHeight, textureWight, textureHeight, color);
-            ms.popMatrix();
 
-            ms.pushMatrix().scale(scaleSpeed).translate(speedX/scaleSpeed, speedY/scaleSpeed);
-            dc.drawText(renderer, speedText, 0, 0, color - 0x1000000, false);
-            ms.popMatrix();
+            if (ConfigValues.INSTANCE.enabledSpeedometer) {
+                String speedText = String.valueOf(speed);
+                String metricsText = "m|s";
 
-            ms.pushMatrix().scale(scaleMetrics).translate(metricsX/scaleMetrics, metricsY/scaleMetrics);
-            dc.drawText(renderer, metricsText, 0, 0,color - 0x1000000, false);
-            ms.popMatrix();
+                float scaleSpeed = scale * 1.5f;
+                float scaleMetrics = scale * 0.5f;
+                int textureWight = 54;
+                int textureHeight = 21;
+
+                int startX = ConfigValues.INSTANCE.speedX;
+                int startY = ConfigValues.INSTANCE.speedY;
+                float speedX = startX + (textureWight * scale - getWidth(speedText) * scaleSpeed) / 2f;
+                float speedY = startY + (textureHeight * scale - fontHeight * scaleSpeed) / 2f;
+                float metricsX = speedX + getWidth(speedText) * scaleSpeed + 1;
+                float metricsY = speedY + fontHeight * scaleSpeed - fontHeight * scaleMetrics;
+
+                ms.pushMatrix().scale(scale).translate(startX / scale, startY / scale);
+                dc.drawTexture(RenderPipelines.GUI_TEXTURED, FRAME, 0, 0, 0, 0, textureWight, textureHeight, textureWight, textureHeight, color);
+                ms.popMatrix();
+
+                ms.pushMatrix().scale(scaleSpeed).translate(speedX / scaleSpeed, speedY / scaleSpeed);
+                dc.drawText(renderer, speedText, 0, 0, color - 0x1000000, false);
+                ms.popMatrix();
+
+                ms.pushMatrix().scale(scaleMetrics).translate(metricsX / scaleMetrics, metricsY / scaleMetrics);
+                dc.drawText(renderer, metricsText, 0, 0, color - 0x1000000, false);
+                ms.popMatrix();
+            }
+
+
+            if (ConfigValues.INSTANCE.enabledAngle) {
+                ClientPlayerEntity plr = MinecraftClient.getInstance().player;
+                float yaw = 0;
+                float pitch = 0;
+                if (plr != null) {
+                    yaw = plr.headYaw % 360;
+                    if (yaw < 0) yaw += 360;
+                    yaw = Math.round(yaw * 10) / 10f;
+                    pitch = Math.round(plr.lastPitch * 10) / 10f;
+                }
+
+                String yawText = String.valueOf(yaw);
+                String pitchText = String.valueOf(pitch);
+
+                int yawX = ConfigValues.INSTANCE.yawX;
+                int yawY = ConfigValues.INSTANCE.yawY;
+                int pitchX = ConfigValues.INSTANCE.pitchX;
+                int pitchY = ConfigValues.INSTANCE.pitchY;
+
+                ms.pushMatrix().scale(scale).translate(yawX / scale, yawY / scale);
+                dc.drawText(renderer, yawText, 0, 0, color, false);
+                ms.popMatrix();
+
+                ms.pushMatrix().scale(scale).translate(pitchX / scale, pitchY / scale);
+                dc.drawText(renderer, pitchText, 0, 0, color, false);
+                ms.popMatrix();
+            }
         }
     }
 
     public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().isPaused()) {
+        if (ConfigValues.INSTANCE.enabled && ConfigValues.INSTANCE.enabledSpeedometer && !MinecraftClient.getInstance().isPaused()) {
             if(count++ >= ConfigValues.INSTANCE.dilay) {
                 ClientPlayerEntity cpe = mc.player;
                 if (cpe != null) {
