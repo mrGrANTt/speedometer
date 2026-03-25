@@ -66,59 +66,92 @@ public class SpeedometerHandler {
 
     private void Handler(DrawContext dc, RenderTickCounter rtc) {
         if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().options.hudHidden) {
+            int fontHeight = 7;
             int speed = (int) Math.round(this.speed);
             int color = countColorWithSpeed(speed);
-
-            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-            String speedText = String.valueOf(speed);
-            String metricsText = "m|s";
-
             float scale = ConfigValues.INSTANCE.scale;
-            float scaleSpeed = scale * 1.5f;
-            float scaleMetrics = scale * 0.5f;
-            int textureWight = 54;
-            int textureHeight = 21;
-
-            int fontHeight = 7;
-            int startX = ConfigValues.INSTANCE.x;
-            int startY = ConfigValues.INSTANCE.y;
-            float speedX = startX + (textureWight*scale - getWidth(speedText)*scaleSpeed)/2f;
-            float speedY = startY + (textureHeight*scale - fontHeight*scaleSpeed)/2f;
-            float metricsX = speedX + getWidth(speedText)*scaleSpeed + 1;
-            float metricsY = speedY + fontHeight*scaleSpeed - fontHeight*scaleMetrics;
-
-
+            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
             MatrixStack ms = dc.getMatrices();
 
-            RenderSystem.setShaderColor( (float) ColorHelper.Argb.getRed(color) /255,
-                    (float) ColorHelper.Argb.getGreen(color) /255,
-                    (float) ColorHelper.Argb.getBlue(color) /255,
-                    (float) ColorHelper.Argb.fullAlpha(color) /255);
+            if (ConfigValues.INSTANCE.enabledSpeedometer) {
+                String speedText = String.valueOf(speed);
+                String metricsText = "m|s";
 
-            ms.push();
-            ms.scale(scale, scale, 1);
-            ms.translate(startX/scale, startY/scale, 1);
-            dc.drawTexture(FRAME, 0, 0, 0, 0, textureWight, textureHeight, textureWight, textureHeight);
-            ms.pop();
+                float scaleSpeed = scale * 1.5f;
+                float scaleMetrics = scale * 0.5f;
+                int textureWight = 54;
+                int textureHeight = 21;
 
-            RenderSystem.setShaderColor(1,1,1,1);
+                int startX = ConfigValues.INSTANCE.speedX;
+                int startY = ConfigValues.INSTANCE.speedY;
+                float speedX = startX + (textureWight * scale - getWidth(speedText) * scaleSpeed) / 2f;
+                float speedY = startY + (textureHeight * scale - fontHeight * scaleSpeed) / 2f;
+                float metricsX = speedX + getWidth(speedText) * scaleSpeed + 1;
+                float metricsY = speedY + fontHeight * scaleSpeed - fontHeight * scaleMetrics;
 
-            ms.push();
-            ms.scale(scaleSpeed, scaleSpeed, 1);
-            ms.translate(speedX/scaleSpeed, speedY/scaleSpeed, 1);
-            dc.drawText(renderer, speedText, 0, 0, color - 0x1000000, false);
-            ms.pop();
+                RenderSystem.setShaderColor( (float) ColorHelper.Argb.getRed(color) /255,
+                        (float) ColorHelper.Argb.getGreen(color) /255,
+                        (float) ColorHelper.Argb.getBlue(color) /255,
+                        (float) ColorHelper.Argb.fullAlpha(color) /255);
 
-            ms.push();
-            ms.scale(scaleMetrics, scaleMetrics, 1);
-            ms.translate(metricsX/scaleMetrics, metricsY/scaleMetrics, 1);
-            dc.drawText(renderer, metricsText, 0, 0,color - 0x1000000, false);
-            ms.pop();
+                ms.push();
+                ms.scale(scale, scale, 1);
+                ms.translate(startX/scale, startY/scale, 1);
+                dc.drawTexture(FRAME, 0, 0, 0, 0, textureWight, textureHeight, textureWight, textureHeight);
+                ms.pop();
+
+                RenderSystem.setShaderColor(1,1,1,1);
+
+                ms.push();
+                ms.scale(scaleSpeed, scaleSpeed, 1);
+                ms.translate(speedX/scaleSpeed, speedY/scaleSpeed, 1);
+                dc.drawText(renderer, speedText, 0, 0, color - 0x1000000, false);
+                ms.pop();
+
+                ms.push();
+                ms.scale(scaleMetrics, scaleMetrics, 1);
+                ms.translate(metricsX/scaleMetrics, metricsY/scaleMetrics, 1);
+                dc.drawText(renderer, metricsText, 0, 0,color - 0x1000000, false);
+                ms.pop();
+            }
+
+
+            if (ConfigValues.INSTANCE.enabledAngle) {
+                ClientPlayerEntity plr = MinecraftClient.getInstance().player;
+                float yaw = 0;
+                float pitch = 0;
+                if (plr != null) {
+                    yaw = plr.getHeadYaw() % 360;
+                    if (yaw < 0) yaw += 360;
+                    yaw = Math.round(yaw * 10) / 10f;
+                    pitch = Math.round(plr.getPitch() * 10) / 10f;
+                }
+
+                String yawText = String.valueOf(yaw);
+                String pitchText = String.valueOf(pitch);
+
+                int yawX = ConfigValues.INSTANCE.yawX;
+                int yawY = ConfigValues.INSTANCE.yawY;
+                int pitchX = ConfigValues.INSTANCE.pitchX;
+                int pitchY = ConfigValues.INSTANCE.pitchY;
+
+                ms.push();
+                ms.scale(scale, scale, 1);
+                ms.translate(yawX / scale, yawY / scale, 1);
+                dc.drawText(renderer, yawText, 0, 0, color - 0x1000000, false);
+                ms.pop();
+
+                ms.push();
+                ms.scale(scale, scale, 1);
+                ms.translate(pitchX / scale, pitchY / scale, 1);
+                dc.drawText(renderer, pitchText, 0, 0, color - 0x1000000, false);
+                ms.pop();
+            }
         }
     }
 
     public void setSpeed(MinecraftClient mc) {
-        if (ConfigValues.INSTANCE.enabled && !MinecraftClient.getInstance().isPaused()) {
+        if (ConfigValues.INSTANCE.enabled && ConfigValues.INSTANCE.enabledSpeedometer && !MinecraftClient.getInstance().isPaused()) {
             if(count++ >= ConfigValues.INSTANCE.dilay) {
                 ClientPlayerEntity cpe = mc.player;
                 if (cpe != null) {
