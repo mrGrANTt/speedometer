@@ -8,12 +8,21 @@
   "speedometer:config.enabled": "§2Вкл",
   "speedometer:config.disabled": "§cВыкл",
 
+  "speedometer:config.category.color": "Цвета",
+  "speedometer:config.category.shown": "Отображение",
+
   "speedometer:config.general.set_enabled" : "Включен:",
+  "speedometer:config.general.set_enabled_speedometer" : "Спидомитр включен:",
+  "speedometer:config.general.set_enabled_angle" : "Счетчик поворота включен:",
   "speedometer:config.general.color" : "Основной цвет",
   "speedometer:config.general.color1" : "Второй цвет",
   "speedometer:config.general.color2" : "Третий цвет",
-  "speedometer:config.general.x" : "X координата спидометра",
-  "speedometer:config.general.y" : "Y координата спидометра",
+  "speedometer:config.general.speed_x" : "X координата спидометра",
+  "speedometer:config.general.speed_y" : "Y координата спидометра",
+  "speedometer:config.general.yaw_x" : "X координата счетчика yaw",
+  "speedometer:config.general.yaw_y" : "Y координата счетчика yaw",
+  "speedometer:config.general.pitch_x" : "X координата счетчика pitch",
+  "speedometer:config.general.pitch_y" : "Y координата счетчика pitch",
   "speedometer:config.general.scale" : "Размер спидометра",
   "speedometer:config.general.dilay" : "Период обновления спидометра",
 
