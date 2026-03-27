@@ -1,4 +1,4 @@
-<img src="https://img.shields.io/badge/modloader-fabric-beige" alt="fabric badge"> <a href="https://modrinth.com/mod/mrg-speedometer"><img src="https://img.shields.io/modrinth/dt/{ID}" alt="modrinth badge"></a>
+<img src="https://img.shields.io/badge/modloader-fabric-beige" alt="fabric badge"> <a href="https://modrinth.com/mod/mrg-speedometer"><img src="https://img.shields.io/modrinth/dt/1uwneI1f" alt="modrinth badge"></a>
 
 # Speedometer
 A simple mod that adds a speedometer to your GUI (‼️requaried <a href="https://modrinth.com/mod/cloth-config">cloth-config</a>‼️)
