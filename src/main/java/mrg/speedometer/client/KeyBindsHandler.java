@@ -19,6 +19,7 @@ public class KeyBindsHandler {
     }
 
     private final KeyBinding openMenu;
+    private final KeyBinding reloadPosition;
     private final KeyBinding toggleHUD;
 
     private KeyBindsHandler() {
@@ -34,6 +35,12 @@ public class KeyBindsHandler {
                 GLFW.GLFW_KEY_RIGHT_BRACKET,
                 CATEGORY
         ));
+        reloadPosition = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "speedometer:button.reloadPosition",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_BACKSLASH,
+                CATEGORY
+        ));
 
         ClientTickEvents.END_CLIENT_TICK.register((v) -> {
             if (MinecraftClient.getInstance().isRunning()) {
@@ -41,9 +48,12 @@ public class KeyBindsHandler {
                     MinecraftClient.getInstance().setScreen(ConfigScreenBuilder
                             .getScreen(MinecraftClient.getInstance().currentScreen));
                 }
-                while (toggleHUD.wasPressed()) {
-                    ConfigValues.INSTANCE.enabled = !ConfigValues.INSTANCE.enabled;
+                while (reloadPosition.wasPressed()) {
+                    ConfigValues.INSTANCE.setEnabled(!ConfigValues.INSTANCE.isEnabled());
                     AutoConfig.getConfigHolder(ConfigValues.class).save();
+                }
+                while (toggleHUD.wasPressed()) {
+                    ConfigValues.INSTANCE.updatePositions();
                 }
             }
         });
