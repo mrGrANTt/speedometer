@@ -42,7 +42,7 @@ public class KeyBindsHandler {
                             .getScreen(MinecraftClient.getInstance().currentScreen));
                 }
                 while (toggleHUD.wasPressed()) {
-                    ConfigValues.INSTANCE.enabled = !ConfigValues.INSTANCE.enabled;
+                    ConfigValues.INSTANCE.setEnabled(!ConfigValues.INSTANCE.isEnabled());
                     AutoConfig.getConfigHolder(ConfigValues.class).save();
                 }
             }
