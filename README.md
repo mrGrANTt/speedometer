@@ -12,6 +12,7 @@ Mod show your moving speed, yaw and pitch on left top of screen. It looks at the
 
 
 ## Plans
-- [ ] Relative positioning
+- [x] Relative positioning
 - [ ] Speed counting in game time
+- [ ] More speedometers
 - [ ] ???
