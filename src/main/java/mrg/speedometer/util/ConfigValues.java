@@ -123,9 +123,4 @@ public class ConfigValues implements ConfigData {
 
     public int getYawY() { return yawY; }
     public void setYawY(int value) { yawY = value; }
-
-
-    public void updatePositions() {
-
-    }
 }
