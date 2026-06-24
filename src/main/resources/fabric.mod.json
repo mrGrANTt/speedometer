@@ -26,14 +26,11 @@
 		"speedometer.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.9",
-		"java": ">=21",
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.1",
+		"java": ">=25",
 		"fabric-api": "*",
-		"cloth-config": ">=20.0.148"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"cloth-config": ">=26.1.154"
 	},
 
 	"custom": {

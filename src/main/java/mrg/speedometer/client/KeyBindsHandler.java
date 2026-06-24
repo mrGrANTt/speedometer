@@ -1,49 +1,52 @@
 package mrg.speedometer.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.ConfigHolder;
 import mrg.speedometer.util.ConfigScreenBuilder;
 import mrg.speedometer.util.ConfigValues;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyBindsHandler {
     public static KeyBindsHandler INSTANCE;
-    public static final KeyBinding.Category CATEGORY = new KeyBinding.Category(Identifier.of("speedometer:button.menu_title"));
+    public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(Identifier.parse("speedometer:button.menu_title"));
     public static void init() {
         INSTANCE = new KeyBindsHandler();
     }
 
-    private final KeyBinding openMenu;
-    private final KeyBinding toggleHUD;
+    private final KeyMapping openMenu;
+    private final KeyMapping toggleHUD;
 
     private KeyBindsHandler() {
-        openMenu = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        openMenu = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "speedometer:button.open_menu",
-                InputUtil.Type.KEYSYM,
+                InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_LEFT_BRACKET,
                 CATEGORY
         ));
-        toggleHUD = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        toggleHUD = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "speedometer:button.toggle_hud",
-                InputUtil.Type.KEYSYM,
+                InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_BRACKET,
                 CATEGORY
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register((v) -> {
-            if (MinecraftClient.getInstance().isRunning()) {
-                while (openMenu.wasPressed()) {
-                    MinecraftClient.getInstance().setScreen(ConfigScreenBuilder
-                            .getScreen(MinecraftClient.getInstance().currentScreen));
+            if (Minecraft.getInstance().isRunning()) {
+                while (openMenu.consumeClick()) {
+                    Minecraft.getInstance().setScreen(ConfigScreenBuilder
+                            .getScreen(Minecraft.getInstance().screen));
                 }
-                while (toggleHUD.wasPressed()) {
+                while (toggleHUD.consumeClick()) {
                     ConfigValues.INSTANCE.setEnabled(!ConfigValues.INSTANCE.isEnabled());
-                    AutoConfig.getConfigHolder(ConfigValues.class).save();
+                    ConfigHolder<?> data = AutoConfig.getConfigHolder(ConfigValues.class);
+                    data.save();
                 }
             }
         });

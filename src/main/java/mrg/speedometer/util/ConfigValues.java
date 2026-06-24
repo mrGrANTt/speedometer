@@ -3,13 +3,13 @@ package mrg.speedometer.util;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.Excluded;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import mrg.speedometer.Speedometer;
 
 @Config(name = Speedometer.MOD_ID)
 public class ConfigValues implements ConfigData {
-    @ConfigEntry.Gui.Excluded
+    @Excluded
     public static ConfigValues INSTANCE;
 
     public static final boolean DEF_ENABLED = true;
