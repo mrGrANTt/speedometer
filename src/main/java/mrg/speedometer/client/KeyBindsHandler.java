@@ -40,8 +40,8 @@ public class KeyBindsHandler {
         ClientTickEvents.END_CLIENT_TICK.register((v) -> {
             if (Minecraft.getInstance().isRunning()) {
                 while (openMenu.consumeClick()) {
-                    Minecraft.getInstance().setScreen(ConfigScreenBuilder
-                            .getScreen(Minecraft.getInstance().screen));
+                    Minecraft.getInstance().gui.setScreen(ConfigScreenBuilder
+                            .getScreen(Minecraft.getInstance().gui.screen()));
                 }
                 while (toggleHUD.consumeClick()) {
                     ConfigValues.INSTANCE.setEnabled(!ConfigValues.INSTANCE.isEnabled());

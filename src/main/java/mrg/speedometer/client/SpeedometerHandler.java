@@ -66,7 +66,7 @@ public class SpeedometerHandler {
     }
 
     private void Handler(GuiGraphicsExtractor dc, DeltaTracker rtc) {
-        if (ConfigValues.INSTANCE.isEnabled() && !Minecraft.getInstance().options.hideGui) {
+        if (ConfigValues.INSTANCE.isEnabled() && !Minecraft.getInstance().gui.hud.isHidden()) {
             int speed = (int) Math.round(this.speed);
             int color = countColorWithSpeed(speed);
             Font renderer = Minecraft.getInstance().font;
